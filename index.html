@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prime Hospital | excellence in care</title>
+  <!-- Font Awesome 6 (free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: #f5f9fc;
+      color: #1e2f4e;
+      line-height: 1.5;
+    }
+
+    /* emergency ribbon */
+    .emergency-strip {
+      background: #ba2b2b;
+      color: white;
+      text-align: center;
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem 2rem;
+    }
+    .emergency-strip i {
+      margin-right: 8px;
+      color: #ffd966;
+    }
+    .emergency-strip span {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* header / navbar */
+    .header {
+      background: white;
+      box-shadow: 0 8px 20px rgba(0,20,50,0.08);
+      padding: 0.7rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-icon {
+      background: #0b3b5c;
+      color: white;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 600;
+      box-shadow: 0 4px 8px rgba(0,60,130,0.2);
+    }
+    .logo-text h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0b3b5c;
+      line-height: 1.2;
+    }
+    .logo-text .sub {
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      color: #3c6e9c;
+      font-weight: 500;
+    }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem 2rem;
+      align-items: center;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-weight: 600;
+      color: #1a3a53;
+      padding: 0.4rem 0.2rem;
+      border-bottom: 3px solid transparent;
+      transition: 0.2s;
+      font-size: 1rem;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      border-bottom-color: #ba2b2b;
+      color: #ba2b2b;
+    }
+    .cta-button {
+      background: #0b3b5c;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.8rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: 0.25s;
+      box-shadow: 0 4px 10px rgba(0,59,92,0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cta-button:hover {
+      background: #ba2b2b;
+      transform: scale(1.02);
+    }
+
+    /* main hero */
+    .hero {
+      background: linear-gradient(105deg, #e6f0f9 0%, #dae6f2 100%);
+      padding: 2.5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: "🏥";
+      font-size: 14rem;
+      opacity: 0.03;
+      position: absolute;
+      bottom: -30px;
+      right: 20px;
+      transform: rotate(10deg);
+      pointer-events: none;
+    }
+    .hero-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 2rem;
+    }
+    .hero-text {
+      flex: 2 1 400px;
+    }
+    .hero-text .badge {
+      background: #ba2b2b;
+      color: white;
+      display: inline-block;
+      padding: 0.3rem 1.2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      margin-bottom: 1.2rem;
+    }
+    .hero-text h2 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #0a3147;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+    .hero-text .address-block {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(4px);
+      padding: 1rem 1.8rem;
+      border-radius: 60px;
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.8rem 1.8rem;
+      font-size: 1.2rem;
+      font-weight: 500;
+      border: 1px solid rgba(11,59,92,0.2);
+      margin: 1.5rem 0 1rem 0;
+    }
+    .address-block i {
+      color: #ba2b2b;
+      font-size: 1.6rem;
+    }
+    .hero-codes {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 1.8rem;
+    }
+    .code-chip {
+      background: white;
+      padding: 0.5rem 1.4rem;
+      border-radius: 50px;
+      font-weight: 600;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      border-left: 5px solid #0b3b5c;
+    }
+    .code-chip i {
+      margin-right: 8px;
+      color: #ba2b2b;
+    }
+    .hero-image {
+      flex: 1 1 300px;
+      background: white;
+      border-radius: 40px 40px 40px 0;
+      padding: 2rem 1.5rem;
+      box-shadow: 0 25px 40px -10px rgba(0,45,70,0.3);
+      text-align: center;
+    }
+    .hero-image i {
+      font-size: 5rem;
+      color: #0b3b5c;
+      background: #e2eefb;
+      padding: 1.2rem;
+      border-radius: 60% 40% 50% 50%;
+      margin-bottom: 1rem;
+    }
+    .qr-sim {
+      font-family: monospace;
+      background: #1e2f4e;
+      color: #e0e0e0;
+      padding: 1rem;
+      border-radius: 16px;
+      letter-spacing: 2px;
+      font-size: 1.2rem;
+    }
+
+    /* highlight cards */
+    .section-title {
+      text-align: center;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #0b3b5c;
+      margin-bottom: 1rem;
+    }
+    .section-title span {
+      border-bottom: 5px solid #ba2b2b;
+      padding-bottom: 5px;
+    }
+    .cards-panel {
+      max-width: 1300px;
+      margin: 3rem auto 2rem;
+      padding: 0 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
+    .card {
+      background: white;
+      flex: 1 1 260px;
+      border-radius: 24px;
+      padding: 2rem 1.5rem;
+      box-shadow: 0 15px 30px rgba(0,35,60,0.08);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0,90,130,0.1);
+      text-align: center;
+    }
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 25px 40px -5px #0b3b5c33;
+      border-color: #0b3b5c20;
+    }
+    .card i {
+      font-size: 3rem;
+      background: #e2f0fa;
+      color: #0b3b5c;
+      padding: 0.7rem;
+      border-radius: 30px;
+      margin-bottom: 1.3rem;
+    }
+    .card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.8rem;
+      color: #1a3a53;
+    }
+    .card p {
+      color: #3e5570;
+      font-weight: 400;
+    }
+
+    /* location & map section (strong emphasis) */
+    .location-section {
+      background: white;
+      padding: 3rem 2rem;
+      box-shadow: inset 0 8px 20px rgba(0,30,60,0.02);
+    }
+    .location-grid {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .map-box {
+      flex: 1 1 400px;
+      background: #eef4f9;
+      border-radius: 32px;
+      padding: 1.8rem;
+    }
+    .map-placeholder {
+      width: 100%;
+      height: 260px;
+      background: linear-gradient(145deg, #cbdbe9, #b1c7db);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #0b3b5c;
+      font-weight: 600;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+      border: 2px dashed white;
+    }
+    .map-placeholder i {
+      font-size: 5rem;
+      opacity: 0.7;
+      margin-bottom: 0.5rem;
+    }
+    .address-details {
+      flex: 1 1 350px;
+      background: #0b3b5c;
+      border-radius: 32px;
+      padding: 2rem 2rem;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .address-details h3 {
+      font-size: 2rem;
+      font-weight: 600;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      border-bottom: 3px solid #ffb347;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .detail-line {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.25rem;
+      margin: 1rem 0;
+      background: rgba(255,255,255,0.12);
+      padding: 0.8rem 1.2rem;
+      border-radius: 60px;
+    }
+    .detail-line i {
+      width: 30px;
+      color: #ffb347;
+    }
+    .plus-code {
+      background: #ffb347;
+      color: #0b3b5c;
+      font-weight: 700;
+      padding: 0.8rem 1.8rem;
+      border-radius: 60px;
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 1.3rem;
+      text-align: center;
+    }
+
+    /* departments / services */
+    .dept-section {
+      background: #f0f7fe;
+      padding: 3rem 2rem;
+    }
+    .dept-grid {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.8rem;
+      justify-content: center;
+    }
+    .dept-item {
+      background: white;
+      padding: 1rem 2rem;
+      border-radius: 100px;
+      font-weight: 600;
+      color: #0b3b5c;
+      box-shadow: 0 4px 8px rgba(0,30,70,0.08);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.2rem;
+      transition: 0.2s;
+      border: 1px solid transparent;
+    }
+    .dept-item:hover {
+      border-color: #ba2b2b;
+      color: #ba2b2b;
+      transform: scale(1.02);
+    }
+    .dept-item i {
+      color: #ba2b2b;
+    }
+
+    /* footer / strong contact */
+    .footer {
+      background: #102b3f;
+      color: #dfeefb;
+      padding: 3rem 2rem 1.5rem;
+    }
+    .footer-content {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3rem;
+    }
+    .footer-col {
+      flex: 1 1 200px;
+    }
+    .footer-col h4 {
+      color: white;
+      font-size: 1.3rem;
+      margin-bottom: 1.2rem;
+      border-left: 5px solid #ba2b2b;
+      padding-left: 0.8rem;
+    }
+    .footer-col p, .footer-col i {
+      margin: 0.7rem 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .footer .plus-code-ft {
+      background: #1f4868;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #fad98b;
+    }
+    .copyright {
+      text-align: center;
+      margin-top: 3rem;
+      border-top: 1px solid #385e7a;
+      padding-top: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    /* responsiveness */
+    @media (max-width: 700px) {
+      .header {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+      .hero-text h2 {
+        font-size: 2.2rem;
+      }
+      .address-block {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- emergency top -->
+  <div class="emergency-strip">
+    <span><i class="fas fa-phone-alt"></i> EMERGENCY 24x7 : +91 124 456 7890</span>
+    <span><i class="fas fa-ambulance"></i> CRITICAL CARE UNIT – OPEN</span>
+  </div>
+
+  <!-- header -->
+  <header class="header">
+    <div class="logo-area">
+      <div class="logo-icon">P</div>
+      <div class="logo-text">
+        <h1>PRIME HOSPITAL</h1>
+        <div class="sub">EXCELLENCE · TRUST · COMPASSION</div>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="#" class="active">HOME</a>
+      <a href="#">PATIENT CARE</a>
+      <a href="#">SPECIALITIES</a>
+      <a href="#">CONTACT</a>
+      <button class="cta-button"><i class="fas fa-calendar-check"></i> BOOK APPOINTMENT</button>
+    </nav>
+  </header>
+
+  <!-- hero with full address and plus code -->
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-text">
+        <div class="badge"><i class="fas fa-map-marker-alt"></i>  ALWAYS NEAR YOU</div>
+        <h2>Where healing meets <br>advanced technology</h2>
+        <div class="address-block">
+          <i class="fas fa-map-pin fa-2x"></i> 
+          <span><strong>CX7Q+8WF, Khandsa Rd, Muhammadpur, Sector 36, Mohammadpur Jharsa, Haryana 122004</strong></span>
+        </div>
+        <div class="hero-codes">
+          <div class="code-chip"><i class="fas fa-qrcode"></i> PLUS CODE: CX7Q+8WF</div>
+          <div class="code-chip"><i class="fas fa-location-dot"></i> LANDMARK: Opp. Jyoti Park</div>
+        </div>
+      </div>
+      <div class="hero-image">
+        <i class="fas fa-hospital-user"></i>
+        <div class="qr-sim">📍 CX7Q+8WF <br> ⬤ KHANDSA RD</div>
+        <p style="margin-top: 1rem; font-weight: 500;">24/7 Emergency & Trauma</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- core strength cards -->
+  <section>
+    <h2 class="section-title"><span>Why Prime</span> stands strong</h2>
+    <div class="cards-panel">
+      <div class="card"><i class="fas fa-user-md"></i><h3>150+ Specialists</h3><p>Multi-super specialty doctors from top institutions</p></div>
+      <div class="card"><i class="fas fa-heartbeat"></i><h3>Critical care</h3><p>State-of-the-art ICU, NICU, and trauma bay</p></div>
+      <div class="card"><i class="fas fa-microscope"></i><h3>Advanced diagnostics</h3><p>MRI 3T, CT 256 slice, robotic lab</p></div>
+      <div class="card"><i class="fas fa-wheelchair"></i><h3>Patient first</h3><p>Accessible infrastructure & digital OPD</p></div>
+    </div>
+  </section>
+
+  <!-- super strong location block (exact address repeated) -->
+  <section class="location-section">
+    <div class="location-grid">
+      <div class="map-box">
+        <h3 style="font-size: 2rem; color: #0b3b5c; margin-bottom: 0.8rem;"><i class="fas fa-map"></i> precise location</h3>
+        <div class="map-placeholder">
+          <i class="fas fa-map-location-dot"></i>
+          <span style="font-size: 1.5rem;">CX7Q+8WF</span>
+          <span>Khandsa Road, Sector 36</span>
+          <div style="background: white; padding: 0.4rem 1.5rem; border-radius: 40px; margin-top: 1rem; color:#0b3b5c;"><i class="fas fa-search"></i> interactive map (open street)</div>
+        </div>
+        <p style="margin-top: 1.2rem;"><i class="fas fa-check-circle" style="color:#0b3b5c;"></i>  Latitude: 28.4506° N, 77.0892° E (approx)</p>
+      </div>
+      <div class="address-details">
+        <h3><i class="fas fa-hospital"></i> Prime Hospital</h3>
+        <div class="detail-line"><i class="fas fa-location-arrow"></i> CX7Q+8WF, Khandsa Rd</div>
+        <div class="detail-line"><i class="fas fa-road"></i> Muhammadpur, Sector 36</div>
+        <div class="detail-line"><i class="fas fa-city"></i> Mohammadpur Jharsa, Haryana 122004</div>
+        <div class="detail-line"><i class="fas fa-globe"></i> PLUS CODE: <strong>CX7Q+8WF</strong></div>
+        <div class="plus-code"><i class="fas fa-thumbtack"></i> WHAT3WORDS : ///clinic.lungs.bridge</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- key departments (including sector info) -->
+  <section class="dept-section">
+    <h2 class="section-title"><span>specialities</span> at sector 36</h2>
+    <div class="dept-grid">
+      <div class="dept-item"><i class="fas fa-heart"></i> Cardiology</div>
+      <div class="dept-item"><i class="fas fa-brain"></i> Neurology</div>
+      <div class="dept-item"><i class="fas fa-bone"></i> Orthopaedics</div>
+      <div class="dept-item"><i class="fas fa-child"></i> Paediatrics</div>
+      <div class="dept-item"><i class="fas fa-female"></i> Gynaecology</div>
+      <div class="dept-item"><i class="fas fa-lungs"></i> Pulmonology</div>
+      <div class="dept-item"><i class="fas fa-stethoscope"></i> General Medicine</div>
+      <div class="dept-item"><i class="fas fa-kitchen-set"></i> Gastro</div>
+    </div>
+    <div style="text-align: center; margin-top: 2.2rem;">
+      <span style="background: white; padding: 0.5rem 2rem; border-radius: 80px; font-weight: 600; box-shadow: 0 2px 8px #0000001a;">🏥 Haryana's most trusted hospital – Khandsa Road landmark</span>
+    </div>
+  </section>
+
+  <!-- footer with strong address repetition -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-col">
+        <h4>PRIME HOSPITAL</h4>
+        <p><i class="fas fa-phone"></i> +91 124 456 7890</p>
+        <p><i class="fas fa-envelope"></i> contact@primehospital.edu</p>
+        <p><i class="fas fa-ambulance"></i> ambulance: +91 124 456 7801</p>
+      </div>
+      <div class="footer-col">
+        <h4>ADDRESS (plus code)</h4>
+        <p><i class="fas fa-map-marker-alt"></i> CX7Q+8WF, Khandsa Road</p>
+        <p><i class="fas fa-location-dot"></i> Muhammadpur, Sector 36,<br>Mohammadpur Jharsa, Haryana 122004</p>
+        <p><i class="fas fa-qrcode"></i> <span class="plus-code-ft">CX7Q+8WF</span> (Plus code)</p>
+      </div>
+      <div class="footer-col">
+        <h4>VISITING HOURS</h4>
+        <p>OPD: 9 am – 5 pm (Mon–Sat)</p>
+        <p>Emergency: 24/7 always open</p>
+        <p>ICU/CCU : round the clock</p>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>© 2025 Prime Hospital – Sector 36, Mohammadpur Jharsa, Haryana. All rights reserved.   |   precise location: CX7Q+8WF Khandsa Rd</p>
+      <p style="margin-top: 0.5rem;"><i class="fas fa-shield-alt"></i> digital presence for stronger community health</p>
+    </div>
+  </footer>
+
+  <!-- small floating plus code reminder (subtle) -->
+  <div style="position: fixed; bottom: 20px; right: 20px; background: #0b3b5c; color: white; padding: 0.6rem 1.2rem; border-radius: 80px; font-weight: 700; box-shadow: 0 8px 20px #0000003a; font-size: 1rem; z-index: 99; border-left: 6px solid #ba2b2b;">
+    <i class="fas fa-location-crosshairs"></i> CX7Q+8WF · KHANDSA RD
+  </div>
+</body>
+</html>
