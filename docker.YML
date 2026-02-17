@@ -1,0 +1,43 @@
+# ==================== DOCKER-COMPOSE.YML ====================
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6
+    container_name: primehospital-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: securepassword123
+    volumes:
+      - mongodb_data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    container_name: primehospital-redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  backend:
+    build: .
+    container_name: primehospital-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+      - redis
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://admin:securepassword123@mongodb:27017/primehospital?authSource=admin
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=your-super-secure-jwt-secret-key-2025
+      - STRIPE_KEY=sk_live_your_stripe_key
+      - TWILIO_SID=your_twilio_sid
+      - TWILIO_AUTH=your_twilio_auth
+
+volumes:
+  mongodb_data:
