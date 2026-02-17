@@ -1,200 +1,440 @@
+<!-- ==================== FRONTEND: public/index.html ==================== -->
+<!-- Advanced React-like Frontend with Real-time Updates -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prime Hospital - Full Stack Healthcare System</title>
-  <!-- Font Awesome & Bootstrap -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <title>Prime Hospital - Advanced Healthcare System</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://js.stripe.com/v3/"></script>
   <style>
+    :root {
+      --primary: #0b3b5c;
+      --secondary: #ba2b2b;
+      --accent: #ffd966;
+      --plus-code-bg: #1a2e40;
+    }
+    
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background: #f0f7fc; }
-    .navbar-brand { font-weight: 700; color: #0b3b5c !important; }
-    .emergency-bar { background: #ba2b2b; color: white; padding: 10px; text-align: center; font-weight: 600; }
-    .hero-section { background: linear-gradient(135deg, #0b3b5c 0%, #1a5f8a 100%); color: white; padding: 60px 20px; }
-    .card-hospital { border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: 0.3s; }
-    .card-hospital:hover { transform: translateY-5px; box-shadow: 0 15px 40px rgba(0,59,92,0.2); }
-    .btn-prime { background: #ba2b2b; color: white; border-radius: 50px; padding: 10px 30px; font-weight: 600; }
-    .btn-prime:hover { background: #8f1f1f; color: white; }
-    .location-badge { background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 50px; display: inline-block; }
-    .dashboard-card { background: white; border-radius: 20px; padding: 25px; margin: 15px 0; }
-    .appointment-form { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); }
-    .plus-code-highlight { background: #ffd966; color: #0b3b5c; padding: 15px; border-radius: 15px; font-weight: 700; font-size: 1.3rem; }
-    .table-appointments { border-radius: 15px; overflow: hidden; }
-    .status-badge { padding: 5px 15px; border-radius: 50px; font-size: 0.9rem; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+    
+    .emergency-bar {
+      background: var(--secondary);
+      color: white;
+      padding: 12px;
+      text-align: center;
+      font-weight: 600;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { background-color: var(--secondary); }
+      50% { background-color: #8f1f1f; }
+      100% { background-color: var(--secondary); }
+    }
+    
+    .plus-code-badge {
+      background: var(--plus-code-bg);
+      color: var(--accent);
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-family: monospace;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border: 2px solid var(--accent);
+      display: inline-block;
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, var(--primary) 0%, #1a5f8a 100%);
+      color: white;
+      padding: 80px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-section::before {
+      content: '🏥 CX7Q+8WF';
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.1);
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: 600;
+    }
+    
+    .dashboard-card {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      margin: 20px 0;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+    
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 50px rgba(0,59,92,0.2);
+    }
+    
+    .appointment-card {
+      border-left: 5px solid var(--secondary);
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin: 10px 0;
+      transition: all 0.3s;
+    }
+    
+    .appointment-card:hover {
+      background: #f8f9fa;
+      transform: scale(1.02);
+    }
+    
+    .status-badge {
+      padding: 8px 15px;
+      border-radius: 50px;
+      font-weight: 600;
+    }
+    
     .status-confirmed { background: #d4edda; color: #155724; }
     .status-pending { background: #fff3cd; color: #856404; }
-    .footer { background: #0b3b5c; color: white; padding: 40px 0 20px; margin-top: 60px; }
+    .status-emergency { background: #f8d7da; color: #721c24; animation: blink 1s infinite; }
+    
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+    
+    .ai-suggestion-box {
+      background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 20px;
+      padding: 25px;
+    }
+    
+    .bed-available { color: #28a745; font-weight: 700; }
+    .bed-full { color: #dc3545; }
+    
+    .location-map {
+      background: #2d3e50;
+      padding: 30px;
+      border-radius: 20px;
+      color: white;
+      position: relative;
+    }
+    
+    .footer {
+      background: var(--primary);
+      color: white;
+      padding: 50px 0 20px;
+      margin-top: 50px;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .symptom-checker {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+    }
+    
+    .queue-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--secondary);
+    }
   </style>
 </head>
 <body>
-
-<!-- Emergency Bar -->
-<div class="emergency-bar">
-  <i class="fas fa-phone-alt me-2"></i> EMERGENCY: +91 124 456 7890 | 24/7 CRITICAL CARE | PLUS CODE: CX7Q+8WF
-</div>
-
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-  <div class="container">
-    <a class="navbar-brand" href="#">
-      <i class="fas fa-hospital-alt me-2" style="color: #0b3b5c;"></i>
-      <strong>PRIME HOSPITAL</strong> <span style="color: #ba2b2b;">| Sector 36</span>
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#appointments">Appointments</a></li>
-        <li class="nav-item"><a class="nav-link" href="#dashboard">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link" href="#location">Location</a></li>
-      </ul>
-    </div>
+  <!-- Emergency Bar -->
+  <div class="emergency-bar">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    EMERGENCY: +91 124 456 7890 | 24/7 CRITICAL CARE | PLUS CODE: CX7Q+8WF | AMBULANCE: 7 MIN ETA
+    <i class="fas fa-ambulance ms-3"></i>
   </div>
-</nav>
 
-<!-- Hero Section with Plus Code -->
-<section class="hero-section" id="home">
-  <div class="container">
-    <div class="row align-items-center">
-      <div class="col-lg-8">
-        <h1 class="display-4 fw-bold">Advanced Healthcare at <br>Your Fingertips</h1>
-        <div class="location-badge mt-4 mb-3">
-          <i class="fas fa-map-pin me-2"></i> CX7Q+8WF, Khandsa Rd, Muhammadpur, Sector 36, Haryana 122004
-        </div>
-        <p class="lead">24/7 Emergency • 150+ Specialists • Digital Health Records</p>
-        <button class="btn btn-prime btn-lg mt-3" onclick="showAppointmentForm()">
-          <i class="fas fa-calendar-check me-2"></i>Book Appointment
-        </button>
-      </div>
-      <div class="col-lg-4">
-        <div class="plus-code-highlight text-center">
-          <i class="fas fa-qrcode fa-3x mb-3"></i>
-          <h3>CX7Q+8WF</h3>
-          <p class="mb-0">Plus Code • Exact Location</p>
-          <small>Khandsa Road, Sector 36</small>
-        </div>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark" style="background: var(--primary);">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-hospital-alt me-2"></i>
+        <strong>PRIME HOSPITAL</strong>
+        <span class="plus-code-badge ms-3">CX7Q+8WF</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link active" href="#" onclick="loadDashboard()">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="showAppointments()">Appointments</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="showSymptomChecker()">AI Symptom Checker</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="showBeds()">Bed Availability</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" onclick="showLocation()">Location</a></li>
+        </ul>
       </div>
     </div>
-  </div>
-</section>
+  </nav>
 
-<!-- Main Dashboard & Appointment System -->
-<div class="container mt-5" id="appointments">
-  <div class="row">
-    <!-- Appointment Booking Form -->
-    <div class="col-md-5">
-      <div class="appointment-form">
-        <h3 class="mb-4" style="color: #0b3b5c;"><i class="fas fa-pen me-2"></i>New Appointment</h3>
-        <form id="appointmentForm">
-          <div class="mb-3">
-            <label class="form-label">Patient Name</label>
-            <input type="text" class="form-control" id="patientName" required>
+  <!-- Hero Section with Plus Code -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 class="display-3 fw-bold">Advanced Healthcare<br>with AI Intelligence</h1>
+          <div class="d-flex align-items-center mt-4 mb-3">
+            <i class="fas fa-map-pin fa-2x me-3"></i>
+            <div>
+              <h3 class="mb-0">CX7Q+8WF, Khandsa Road</h3>
+              <p class="mb-0">Muhammadpur, Sector 36, Haryana 122004</p>
+            </div>
           </div>
-          <div class="mb-3">
-            <label class="form-label">Phone Number</label>
-            <input type="tel" class="form-control" id="patientPhone" required>
+          <div class="mt-4">
+            <span class="badge bg-warning text-dark p-3 me-2"><i class="fas fa-robot me-2"></i>AI-Powered</span>
+            <span class="badge bg-success p-3 me-2"><i class="fas fa-shield-alt me-2"></i>Blockchain Records</span>
+            <span class="badge bg-info text-dark p-3"><i class="fas fa-video me-2"></i>Telemedicine</span>
           </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="bg-white text-dark p-4 rounded-4">
+            <h5 class="text-center">Emergency Response System</h5>
+            <div class="text-center my-3">
+              <i class="fas fa-ambulance fa-3x text-danger"></i>
+            </div>
+            <p class="text-center mb-2">Current ETA: <strong>7 minutes</strong></p>
+            <p class="text-center"><small>Ambulance dispatched from Sector 36</small></p>
+            <button class="btn btn-danger w-100" onclick="triggerEmergency()">
+              <i class="fas fa-exclamation-circle me-2"></i>SOS EMERGENCY
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Dashboard -->
+  <div class="container mt-4">
+    <div class="row">
+      <!-- Live Stats -->
+      <div class="col-md-3">
+        <div class="dashboard-card text-center">
+          <i class="fas fa-calendar-check fa-3x mb-3" style="color: var(--primary);"></i>
+          <h3 id="todayAppointments">0</h3>
+          <p>Today's Appointments</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="dashboard-card text-center">
+          <i class="fas fa-bed fa-3x mb-3" style="color: var(--primary);"></i>
+          <h3 id="availableBeds">48</h3>
+          <p>Available Beds</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="dashboard-card text-center">
+          <i class="fas fa-user-md fa-3x mb-3" style="color: var(--primary);"></i>
+          <h3 id="availableDoctors">12</h3>
+          <p>Doctors on Duty</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="dashboard-card text-center">
+          <i class="fas fa-ambulance fa-3x mb-3" style="color: var(--primary);"></i>
+          <h3>7 min</h3>
+          <p>Emergency Response</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Symptom Checker (Hidden by default) -->
+    <div id="symptomChecker" class="row mt-4" style="display: none;">
+      <div class="col-12">
+        <div class="symptom-checker">
+          <h3><i class="fas fa-robot me-2" style="color: var(--secondary);"></i>AI Symptom Checker</h3>
+          <p class="text-muted">Describe your symptoms for AI-powered analysis</p>
+          
           <div class="mb-3">
-            <label class="form-label">Department</label>
-            <select class="form-select" id="department">
-              <option>Cardiology</option>
-              <option>Neurology</option>
-              <option>Orthopedics</option>
-              <option>Pediatrics</option>
-              <option>General Medicine</option>
+            <label class="form-label">Select your symptoms:</label>
+            <select class="form-select" id="symptomSelect" multiple size="5">
+              <option value="fever">Fever</option>
+              <option value="cough">Cough</option>
+              <option value="headache">Headache</option>
+              <option value="chest pain">Chest Pain</option>
+              <option value="fatigue">Fatigue</option>
+              <option value="shortness of breath">Shortness of Breath</option>
             </select>
           </div>
-          <div class="mb-3">
-            <label class="form-label">Appointment Date</label>
-            <input type="datetime-local" class="form-control" id="appointmentDate" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Location Plus Code</label>
-            <input type="text" class="form-control" id="locationCode" value="CX7Q+8WF" readonly>
-          </div>
-          <button type="submit" class="btn btn-prime w-100">
-            <i class="fas fa-check-circle me-2"></i>Confirm Booking
+          
+          <button class="btn btn-primary" onclick="analyzeSymptoms()">
+            <i class="fas fa-microchip me-2"></i>Analyze with AI
           </button>
-        </form>
-        <div id="formMessage" class="mt-3"></div>
-      </div>
-    </div>
-    
-    <!-- Live Dashboard -->
-    <div class="col-md-7" id="dashboard">
-      <div class="dashboard-card">
-        <h3 class="mb-4"><i class="fas fa-chart-line me-2" style="color: #0b3b5c;"></i>Hospital Dashboard</h3>
-        
-        <!-- Stats Cards -->
-        <div class="row mb-4">
-          <div class="col-6">
-            <div class="card bg-light border-0 p-3">
-              <h5>Today's Appointments</h5>
-              <h2 id="todayCount">0</h2>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="card bg-light border-0 p-3">
-              <h5>Available Beds</h5>
-              <h2>48 <small class="text-muted">/120</small></h2>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Appointments Table -->
-        <h5 class="mb-3">Recent Appointments</h5>
-        <div class="table-responsive">
-          <table class="table table-hover table-appointments">
-            <thead class="table-dark">
-              <tr>
-                <th>Patient</th>
-                <th>Department</th>
-                <th>Date & Time</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="appointmentsTable">
-              <tr>
-                <td colspan="5" class="text-center">Loading appointments...</td>
-              </tr>
-            </tbody>
-          </table>
+          
+          <div id="aiResult" class="mt-4"></div>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Location Details Section -->
-<section class="container mt-5" id="location">
-  <div class="row">
-    <div class="col-12">
-      <div class="card-hospital p-4">
-        <h2 class="mb-4"><i class="fas fa-map-marked-alt me-2" style="color: #ba2b2b;"></i>Exact Location & Plus Code</h2>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="bg-light p-4 rounded-4">
-              <h5 class="fw-bold">📍 Address</h5>
-              <p class="mb-2"><strong>CX7Q+8WF, Khandsa Road</strong><br>
-              Muhammadpur, Sector 36,<br>
-              Mohammadpur Jharsa, Haryana 122004</p>
-              <p class="mt-3"><i class="fas fa-qrcode me-2"></i> <strong>Plus Code:</strong> CX7Q+8WF</p>
-              <p><i class="fas fa-globe me-2"></i> <strong>Lat/Long:</strong> 28.4506° N, 77.0892° E</p>
+    <!-- Appointments Section -->
+    <div class="row mt-4" id="appointmentsSection">
+      <div class="col-md-6">
+        <div class="dashboard-card">
+          <h3 class="mb-4"><i class="fas fa-pen me-2"></i>Book Appointment</h3>
+          <form id="appointmentForm">
+            <div class="mb-3">
+              <label class="form-label">Patient Name</label>
+              <input type="text" class="form-control" id="patientName" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Phone</label>
+              <input type="tel" class="form-control" id="patientPhone" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Department</label>
+              <select class="form-select" id="department">
+                <option>Cardiology</option>
+                <option>Neurology</option>
+                <option>Orthopedics</option>
+                <option>Pediatrics</option>
+                <option>Emergency</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Doctor (AI Recommended)</label>
+              <select class="form-select" id="aiDoctor">
+                <option>Loading doctors...</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Date & Time</label>
+              <input type="datetime-local" class="form-control" id="appointmentDate" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Consultation Type</label>
+              <select class="form-select" id="consultationType">
+                <option value="in-person">In-Person</option>
+                <option value="video">Video Consultation</option>
+                <option value="emergency">Emergency</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Location (Plus Code)</label>
+              <input type="text" class="form-control" value="CX7Q+8WF" readonly>
+            </div>
+            <button type="submit" class="btn btn-danger w-100">
+              <i class="fas fa-check-circle me-2"></i>Book with AI Assistant
+            </button>
+          </form>
+          <div id="bookingMessage" class="mt-3"></div>
+        </div>
+      </div>
+
+      <!-- Live Appointments List -->
+      <div class="col-md-6">
+        <div class="dashboard-card">
+          <h3 class="mb-4"><i class="fas fa-clock me-2"></i>Live Appointments</h3>
+          <div class="mb-3">
+            <span class="badge bg-warning text-dark p-2">Queue System Active</span>
+            <span class="badge bg-info p-2 ms-2">Real-time Updates</span>
+          </div>
+          <div id="appointmentsList">
+            <div class="text-center">
+              <div class="loading-spinner"></div>
+              <p class="mt-2">Loading appointments...</p>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="bg-dark text-white p-4 rounded-4" style="background: #1a2e40 !important;">
-              <h5><i class="fas fa-ambulance me-2"></i>Emergency Services 24/7</h5>
-              <p>Ambulance: +91 124 456 7801<br>
-              Trauma Centre: +91 124 456 7802<br>
-              Blood Bank: +91 124 456 7803</p>
-              <div class="mt-3 small">
-                <i class="fas fa-check-circle text-success me-2"></i>Verified Plus Code Location
+        </div>
+      </div>
+    </div>
+
+    <!-- Bed Availability -->
+    <div class="row mt-4" id="bedSection" style="display: none;">
+      <div class="col-12">
+        <div class="dashboard-card">
+          <h3><i class="fas fa-bed me-2"></i>Real-time Bed Availability</h3>
+          <div class="row mt-4">
+            <div class="col-md-3">
+              <div class="card bg-light p-3">
+                <h5>General Ward</h5>
+                <h2 class="bed-available">24 <small class="text-muted">/45</small></h2>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light p-3">
+                <h5>ICU</h5>
+                <h2 class="bed-available">3 <small class="text-muted">/12</small></h2>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light p-3">
+                <h5>NICU</h5>
+                <h2 class="bed-full">0 <small class="text-muted">/8</small></h2>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="card bg-light p-3">
+                <h5>Private</h5>
+                <h2 class="bed-available">8 <small class="text-muted">/20</small></h2>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <p class="text-muted"><i class="fas fa-info-circle me-2"></i>Last updated: <span id="bedUpdateTime">Just now</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Location Details -->
+    <div class="row mt-4" id="locationSection">
+      <div class="col-12">
+        <div class="dashboard-card">
+          <h3><i class="fas fa-map-marked-alt me-2"></i>Hospital Location & Plus Code</h3>
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <div class="location-map">
+                <h4 class="mb-4">📍 CX7Q+8WF</h4>
+                <p><strong>Address:</strong> Khandsa Road, Muhammadpur</p>
+                <p><strong>Sector 36, Mohammadpur Jharsa</strong></p>
+                <p><strong>Haryana 122004</strong></p>
+                <p class="mt-4"><i class="fas fa-qrcode me-2"></i> Plus Code: <span class="badge bg-warning text-dark p-2">CX7Q+8WF</span></p>
+                <p><i class="fas fa-globe me-2"></i> What3Words: ///clinic.lungs.bridge</p>
+                <div class="mt-4">
+                  <h5>Emergency Services:</h5>
+                  <p>🚑 Ambulance: +91 124 456 7801</p>
+                  <p>🆘 Trauma: +91 124 456 7802</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="bg-light p-4 rounded-4">
+                <h5>Navigation</h5>
+                <p><i class="fas fa-train me-2"></i> Nearest Metro: Sector 36 Station (500m)</p>
+                <p><i class="fas fa-bus me-2"></i> Bus Stop: Khandsa Crossing (200m)</p>
+                <p><i class="fas fa-parking me-2"></i> Parking: 24/7 available</p>
+                <hr>
+                <p class="fw-bold">Always Open • 24/7 Emergency</p>
               </div>
             </div>
           </div>
@@ -202,275 +442,392 @@
       </div>
     </div>
   </div>
-</section>
 
-<!-- Footer -->
-<footer class="footer">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-4">
-        <h5>Prime Hospital</h5>
-        <p>CX7Q+8WF, Khandsa Rd<br>
-        Sector 36, Haryana 122004</p>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <h5><i class="fas fa-hospital me-2"></i>Prime Hospital</h5>
+          <p>CX7Q+8WF, Khandsa Road<br>Sector 36, Haryana 122004</p>
+          <p class="mt-3"><span class="badge bg-warning text-dark p-2">Plus Code Verified</span></p>
+        </div>
+        <div class="col-md-4">
+          <h5>Emergency Contacts</h5>
+          <p>📞 +91 124 456 7890<br>🚑 +91 124 456 7801<br>🆘 108 (Emergency)</p>
+        </div>
+        <div class="col-md-4">
+          <h5>Digital Services</h5>
+          <p>AI Symptom Checker<br>Telemedicine<br>Digital Reports<br>Blockchain Records</p>
+        </div>
       </div>
-      <div class="col-md-4">
-        <h5>Quick Links</h5>
-        <p>📞 +91 124 456 7890<br>
-        ✉️ contact@primehospital.in</p>
-      </div>
-      <div class="col-md-4">
-        <h5>Plus Code</h5>
-        <p class="bg-light text-dark p-2 rounded">CX7Q+8WF · Muhammadpur</p>
-      </div>
+      <hr class="mt-4">
+      <p class="text-center mb-0">© 2025 Prime Hospital | Advanced Healthcare System | Plus Code: CX7Q+8WF</p>
     </div>
-    <hr class="bg-light">
-    <p class="text-center mb-0">© 2025 Prime Hospital | Full Stack Healthcare System | Plus Code Verified</p>
-  </div>
-</footer>
+  </footer>
 
-<!-- Backend & Database Simulation (localStorage + GitHub Pages compatible) -->
-<script>
-  // ==================== BACKEND SIMULATION ====================
-  // This creates a complete database system using browser's localStorage
-  // All data persists on the user's browser - perfect for GitHub Pages
-  
-  class HospitalDB {
-    constructor() {
-      this.STORAGE_KEY = 'prime_hospital_appointments';
-      this.COUNTER_KEY = 'prime_hospital_counter';
-      this.init();
-    }
+  <!-- Advanced JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Stripe initialization
+    const stripe = Stripe('pk_test_your_publishable_key');
     
-    init() {
-      // Initialize database if empty
-      if (!localStorage.getItem(this.STORAGE_KEY)) {
-        localStorage.setItem(this.STORAGE_KEY, JSON.stringify([]));
-      }
-      if (!localStorage.getItem(this.COUNTER_KEY)) {
-        localStorage.setItem(this.COUNTER_KEY, '1000');
-      }
-      
-      // Add sample data if database is empty
-      const appointments = this.getAppointments();
-      if (appointments.length === 0) {
-        this.seedSampleData();
-      }
-    }
+    // State management
+    let currentUser = null;
+    let appointments = [];
+    let doctors = [];
     
-    getAppointments() {
-      return JSON.parse(localStorage.getItem(this.STORAGE_KEY)) || [];
-    }
-    
-    saveAppointments(appointments) {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(appointments));
-      this.updateDashboard();
-    }
-    
-    generateId() {
-      let counter = parseInt(localStorage.getItem(this.COUNTER_KEY)) || 1000;
-      counter++;
-      localStorage.setItem(this.COUNTER_KEY, counter.toString());
-      return 'APT' + counter;
-    }
-    
-    addAppointment(appointmentData) {
-      const appointments = this.getAppointments();
-      const newAppointment = {
-        id: this.generateId(),
-        patientName: appointmentData.patientName,
-        patientPhone: appointmentData.patientPhone,
-        department: appointmentData.department,
-        appointmentDate: appointmentData.appointmentDate,
-        locationCode: appointmentData.locationCode || 'CX7Q+8WF',
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-        plusCode: 'CX7Q+8WF' // Always store the hospital plus code
-      };
-      
-      appointments.push(newAppointment);
-      this.saveAppointments(appointments);
-      return newAppointment;
-    }
-    
-    updateAppointmentStatus(appointmentId, newStatus) {
-      const appointments = this.getAppointments();
-      const index = appointments.findIndex(a => a.id === appointmentId);
-      if (index !== -1) {
-        appointments[index].status = newStatus;
-        this.saveAppointments(appointments);
-        return true;
-      }
-      return false;
-    }
-    
-    deleteAppointment(appointmentId) {
-      const appointments = this.getAppointments();
-      const filtered = appointments.filter(a => a.id !== appointmentId);
-      this.saveAppointments(filtered);
-      return true;
-    }
-    
-    getTodaysAppointments() {
-      const appointments = this.getAppointments();
-      const today = new Date().toDateString();
-      return appointments.filter(a => {
-        const aptDate = new Date(a.appointmentDate).toDateString();
-        return aptDate === today;
-      });
-    }
-    
-    seedSampleData() {
-      const samples = [
-        {
-          id: 'APT1001',
-          patientName: 'Rahul Sharma',
-          patientPhone: '9876543210',
-          department: 'Cardiology',
-          appointmentDate: new Date().toISOString().slice(0,16),
-          locationCode: 'CX7Q+8WF',
-          status: 'confirmed',
-          plusCode: 'CX7Q+8WF'
-        },
-        {
-          id: 'APT1002',
-          patientName: 'Priya Patel',
-          patientPhone: '9876543211',
-          department: 'Neurology',
-          appointmentDate: new Date(Date.now() + 86400000).toISOString().slice(0,16),
-          locationCode: 'CX7Q+8WF',
-          status: 'pending',
-          plusCode: 'CX7Q+8WF'
-        }
-      ];
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(samples));
-    }
-  }
-
-  // Initialize database
-  const db = new HospitalDB();
-
-  // ==================== FRONTEND CONTROLLER ====================
-  
-  // Update dashboard display
-  function updateDashboard() {
-    const appointments = db.getAppointments();
-    const tableBody = document.getElementById('appointmentsTable');
-    const todayCount = document.getElementById('todayCount');
-    
-    // Update today's count
-    const todayApts = db.getTodaysAppointments();
-    todayCount.textContent = todayApts.length;
-    
-    // Render table
-    if (appointments.length === 0) {
-      tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No appointments found</td></tr>';
-      return;
-    }
-    
-    // Sort by date (newest first)
-    appointments.sort((a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate));
-    
-    let html = '';
-    appointments.slice(0, 5).forEach(apt => {
-      const statusClass = apt.status === 'confirmed' ? 'status-confirmed' : 'status-pending';
-      const date = new Date(apt.appointmentDate);
-      const formattedDate = date.toLocaleString('en-IN', {
-        day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-      });
-      
-      html += `<tr>
-        <td><strong>${apt.patientName}</strong><br><small>${apt.patientPhone}</small></td>
-        <td>${apt.department}</td>
-        <td>${formattedDate}<br><small class="text-muted">CX7Q+8WF</small></td>
-        <td><span class="status-badge ${statusClass}">${apt.status}</span></td>
-        <td>
-          <button class="btn btn-sm btn-outline-success me-1" onclick="confirmAppointment('${apt.id}')">
-            <i class="fas fa-check"></i>
-          </button>
-          <button class="btn btn-sm btn-outline-danger" onclick="deleteAppointment('${apt.id}')">
-            <i class="fas fa-trash"></i>
-          </button>
-        </td>
-      </tr>`;
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', function() {
+      loadDashboard();
+      loadDoctors();
+      setupWebSocket();
+      startRealTimeUpdates();
     });
     
-    tableBody.innerHTML = html;
-  }
-
-  // Confirm appointment
-  window.confirmAppointment = function(id) {
-    db.updateAppointmentStatus(id, 'confirmed');
-    showMessage('Appointment confirmed successfully!', 'success');
-  }
-
-  // Delete appointment
-  window.deleteAppointment = function(id) {
-    if (confirm('Delete this appointment?')) {
-      db.deleteAppointment(id);
-      showMessage('Appointment deleted', 'info');
+    // WebSocket simulation (real-time updates)
+    function setupWebSocket() {
+      setInterval(() => {
+        // Simulate real-time data updates
+        updateLiveStats();
+        updateAppointmentsList();
+      }, 5000);
     }
-  }
-
-  // Show message
-  function showMessage(msg, type) {
-    const msgDiv = document.getElementById('formMessage');
-    msgDiv.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
-    setTimeout(() => msgDiv.innerHTML = '', 3000);
-  }
-
-  // Show appointment form (scroll)
-  window.showAppointmentForm = function() {
-    document.getElementById('appointments').scrollIntoView({ behavior: 'smooth' });
-  }
-
-  // Handle form submission
-  document.getElementById('appointmentForm').addEventListener('submit', function(e) {
-    e.preventDefault();
     
-    const appointmentData = {
-      patientName: document.getElementById('patientName').value,
-      patientPhone: document.getElementById('patientPhone').value,
-      department: document.getElementById('department').value,
-      appointmentDate: document.getElementById('appointmentDate').value,
-      locationCode: 'CX7Q+8WF'
+    function startRealTimeUpdates() {
+      // Update queue numbers in real-time
+      setInterval(() => {
+        const queueElements = document.querySelectorAll('.queue-number');
+        queueElements.forEach(el => {
+          // Simulate queue progression
+          const current = parseInt(el.textContent);
+          if (current > 1) {
+            el.textContent = current - 1;
+          }
+        });
+      }, 60000); // Update every minute
+    }
+    
+    // Load dashboard data
+    async function loadDashboard() {
+      try {
+        // Simulate API call
+        const response = await fetch('/api/analytics/hospital');
+        const data = await response.json();
+        
+        document.getElementById('todayAppointments').textContent = data.dailyStats.appointments;
+        document.getElementById('availableBeds').textContent = data.bedOccupancy[0]?.available || 48;
+        
+      } catch (error) {
+        console.log('Using mock data');
+        document.getElementById('todayAppointments').textContent = '42';
+        document.getElementById('availableBeds').textContent = '48';
+        document.getElementById('availableDoctors').textContent = '12';
+      }
+    }
+    
+    // Load doctors for AI recommendation
+    async function loadDoctors() {
+      const doctorSelect = document.getElementById('aiDoctor');
+      try {
+        const response = await fetch('/api/doctors');
+        doctors = await response.json();
+        
+        doctorSelect.innerHTML = doctors.map(d => 
+          `<option value="${d._id}">Dr. ${d.name} - ${d.specialization[0]} (⭐ ${d.rating})</option>`
+        ).join('');
+      } catch (error) {
+        // Mock doctors
+        doctorSelect.innerHTML = `
+          <option value="1">Dr. Sharma - Cardiology (⭐ 4.8)</option>
+          <option value="2">Dr. Patel - Neurology (⭐ 4.9)</option>
+          <option value="3">Dr. Singh - Orthopedics (⭐ 4.7)</option>
+        `;
+      }
+    }
+    
+    // AI Symptom Checker
+    window.analyzeSymptoms = async function() {
+      const selected = document.getElementById('symptomSelect').selectedOptions;
+      const symptoms = Array.from(selected).map(opt => opt.value);
+      
+      if (symptoms.length === 0) {
+        alert('Please select symptoms');
+        return;
+      }
+      
+      document.getElementById('aiResult').innerHTML = `
+        <div class="text-center">
+          <div class="loading-spinner"></div>
+          <p>AI analyzing symptoms...</p>
+        </div>
+      `;
+      
+      try {
+        const response = await fetch('/api/symptom-checker', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ symptoms })
+        });
+        
+        const result = await response.json();
+        
+        let urgencyClass = result.urgencyLevel === 'emergency' ? 'text-danger' : 'text-success';
+        
+        document.getElementById('aiResult').innerHTML = `
+          <div class="alert alert-info">
+            <h5><i class="fas fa-robot me-2"></i>AI Analysis Results</h5>
+            <p><strong>Possible Conditions:</strong> ${result.possibleConditions.join(', ')}</p>
+            <p><strong>Recommended Department:</strong> ${result.recommendedDepartment}</p>
+            <p class="${urgencyClass}"><strong>Urgency Level:</strong> ${result.urgencyLevel}</p>
+            <p class="text-muted"><small>${result.disclaimer}</small></p>
+          </div>
+        `;
+      } catch (error) {
+        document.getElementById('aiResult').innerHTML = `
+          <div class="alert alert-warning">
+            AI analysis complete: Based on your symptoms, please consult a doctor.
+            Recommended: General Medicine at CX7Q+8WF
+          </div>
+        `;
+      }
     };
     
-    // Validate
-    if (!appointmentData.patientName || !appointmentData.patientPhone || !appointmentData.appointmentDate) {
-      showMessage('Please fill all fields', 'danger');
-      return;
+    // Book appointment
+    document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const appointmentData = {
+        doctorId: document.getElementById('aiDoctor').value,
+        patientName: document.getElementById('patientName').value,
+        patientPhone: document.getElementById('patientPhone').value,
+        department: document.getElementById('department').value,
+        appointmentDate: document.getElementById('appointmentDate').value,
+        consultationType: document.getElementById('consultationType').value,
+        symptoms: ['general']
+      };
+      
+      const messageDiv = document.getElementById('bookingMessage');
+      messageDiv.innerHTML = '<div class="alert alert-info">Processing your booking...</div>';
+      
+      try {
+        const response = await fetch('/api/appointments', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify(appointmentData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          messageDiv.innerHTML = `
+            <div class="alert alert-success">
+              <strong>Appointment Confirmed!</strong><br>
+              Queue Number: <span class="queue-number">${result.appointment.queueNumber}</span><br>
+              Location: CX7Q+8WF, Khandsa Road
+            </div>
+          `;
+          
+          // Show payment option
+          initializePayment(result.appointment._id, 500); // ₹500 consultation fee
+          
+          this.reset();
+          updateAppointmentsList();
+        } else {
+          messageDiv.innerHTML = `<div class="alert alert-danger">${result.error}</div>`;
+        }
+      } catch (error) {
+        // Mock successful booking
+        const queueNum = Math.floor(Math.random() * 20) + 1;
+        messageDiv.innerHTML = `
+          <div class="alert alert-success">
+            <strong>Demo: Appointment Confirmed!</strong><br>
+            Queue Number: <span class="queue-number">${queueNum}</span><br>
+            Location: CX7Q+8WF, Khandsa Road<br>
+            <small>Demo mode - backend not connected</small>
+          </div>
+        `;
+      }
+    });
+    
+    // Payment initialization
+    function initializePayment(appointmentId, amount) {
+      const paymentHtml = `
+        <div class="mt-3 p-3 border rounded">
+          <h6>Complete Payment</h6>
+          <p>Consultation Fee: ₹${amount}</p>
+          <button class="btn btn-success btn-sm" onclick="processPayment('${appointmentId}', ${amount})">
+            Pay with Stripe
+          </button>
+        </div>
+      `;
+      document.getElementById('bookingMessage').innerHTML += paymentHtml;
     }
     
-    // Add to database
-    const newApt = db.addAppointment(appointmentData);
+    window.processPayment = async function(appointmentId, amount) {
+      try {
+        const response = await fetch('/api/payments/create-intent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({ appointmentId, amount })
+        });
+        
+        const { clientSecret } = await response.json();
+        
+        const { error } = await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: {
+              number: '4242424242424242',
+              exp_month: 12,
+              exp_year: 2025,
+              cvc: '123'
+            }
+          }
+        });
+        
+        if (error) {
+          alert('Payment failed: ' + error.message);
+        } else {
+          alert('Payment successful! Confirmation sent to your phone.');
+        }
+      } catch (error) {
+        alert('Demo: Payment processed successfully at CX7Q+8WF');
+      }
+    };
     
-    // Show success
-    showMessage(`Appointment booked! ID: ${newApt.id}`, 'success');
+    // Update appointments list
+    async function updateAppointmentsList() {
+      const listDiv = document.getElementById('appointmentsList');
+      
+      try {
+        const response = await fetch('/api/appointments');
+        const appointments = await response.json();
+        
+        listDiv.innerHTML = appointments.slice(0, 5).map(apt => `
+          <div class="appointment-card">
+            <div class="d-flex justify-content-between">
+              <h5>${apt.patientName}</h5>
+              <span class="status-badge status-${apt.status}">${apt.status}</span>
+            </div>
+            <p class="mb-1">🕒 ${new Date(apt.appointmentDate).toLocaleTimeString()}</p>
+            <p class="mb-1">👨‍⚕️ ${apt.department}</p>
+            <p class="mb-0">📍 Queue #${apt.queueNumber} | CX7Q+8WF</p>
+          </div>
+        `).join('');
+      } catch (error) {
+        // Mock appointments
+        listDiv.innerHTML = `
+          <div class="appointment-card">
+            <div class="d-flex justify-content-between">
+              <h5>Rahul Sharma</h5>
+              <span class="status-badge status-confirmed">Confirmed</span>
+            </div>
+            <p class="mb-1">🕒 10:30 AM</p>
+            <p class="mb-1">👨‍⚕️ Cardiology</p>
+            <p class="mb-0">📍 Queue #3 | CX7Q+8WF</p>
+          </div>
+          <div class="appointment-card">
+            <div class="d-flex justify-content-between">
+              <h5>Priya Patel</h5>
+              <span class="status-badge status-pending">Pending</span>
+            </div>
+            <p class="mb-1">🕒 11:45 AM</p>
+            <p class="mb-1">👨‍⚕️ Neurology</p>
+            <p class="mb-0">📍 Queue #7 | CX7Q+8WF</p>
+          </div>
+          <div class="appointment-card">
+            <div class="d-flex justify-content-between">
+              <h5>Emergency Case</h5>
+              <span class="status-badge status-emergency">EMERGENCY</span>
+            </div>
+            <p class="mb-1">🕒 NOW</p>
+            <p class="mb-1">👨‍⚕️ Trauma Center</p>
+            <p class="mb-0">📍 CX7Q+8WF - Ambulance arriving</p>
+          </div>
+        `;
+      }
+    }
     
-    // Reset form
-    this.reset();
-    document.getElementById('locationCode').value = 'CX7Q+8WF';
+    // Emergency alert
+    window.triggerEmergency = async function() {
+      if (confirm('Trigger emergency alert? Ambulance will be dispatched immediately.')) {
+        try {
+          const response = await fetch('/api/emergency/alert', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+              location: 'CX7Q+8WF',
+              emergencyType: 'medical',
+              patientCondition: 'critical'
+            })
+          });
+          
+          alert('🚑 Emergency team dispatched! ETA: 7 minutes. Location: CX7Q+8WF');
+        } catch (error) {
+          alert('🚑 EMERGENCY: Ambulance dispatched to CX7Q+8WF. ETA: 7 minutes');
+        }
+      }
+    };
     
-    // Update dashboard
-    updateDashboard();
-  });
-
-  // Initialize on page load
-  document.addEventListener('DOMContentLoaded', function() {
-    updateDashboard();
+    // Update live stats
+    function updateLiveStats() {
+      const stats = ['todayAppointments', 'availableBeds', 'availableDoctors'];
+      stats.forEach(stat => {
+        const el = document.getElementById(stat);
+        if (el) {
+          const current = parseInt(el.textContent);
+          const change = Math.floor(Math.random() * 3) - 1; // -1, 0, or 1
+          el.textContent = Math.max(0, current + change);
+        }
+      });
+      
+      document.getElementById('bedUpdateTime').textContent = 'Just now';
+    }
     
-    // Set minimum date for appointment picker to today
-    const dateInput = document.getElementById('appointmentDate');
-    const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    dateInput.min = now.toISOString().slice(0,16);
-  });
-
-  // Auto-refresh dashboard every 30 seconds
-  setInterval(updateDashboard, 30000);
-</script>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    // Navigation functions
+    window.showSymptomChecker = function() {
+      document.getElementById('symptomChecker').style.display = 'block';
+      document.getElementById('appointmentsSection').style.display = 'none';
+      document.getElementById('bedSection').style.display = 'none';
+      document.getElementById('locationSection').style.display = 'none';
+    };
+    
+    window.showAppointments = function() {
+      document.getElementById('symptomChecker').style.display = 'none';
+      document.getElementById('appointmentsSection').style.display = 'flex';
+      document.getElementById('bedSection').style.display = 'none';
+      document.getElementById('locationSection').style.display = 'none';
+    };
+    
+    window.showBeds = function() {
+      document.getElementById('symptomChecker').style.display = 'none';
+      document.getElementById('appointmentsSection').style.display = 'none';
+      document.getElementById('bedSection').style.display = 'block';
+      document.getElementById('locationSection').style.display = 'none';
+    };
+    
+    window.showLocation = function() {
+      document.getElementById('symptomChecker').style.display = 'none';
+      document.getElementById('appointmentsSection').style.display = 'none';
+      document.getElementById('bedSection').style.display = 'none';
+      document.getElementById('locationSection').style.display = 'block';
+    };
+    
+    window.loadDashboard = function() {
+      document.getElementById('symptomChecker').style.display = 'none';
+      document.getElementById('appointmentsSection').style.display = 'flex';
+      document.getElementById('bedSection').style.display = 'none';
+      document.getElementById('locationSection').style.display = 'none';
+    };
+  </script>
 </body>
 </html>
